@@ -1,134 +1,115 @@
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { 
-  ShoppingCart, 
-  Package, 
-  IndianRupee,
-  TrendingUp,
-  Clock,
-  CheckCircle
-} from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { ShoppingCart, Package, TrendingUp, Clock, Eye } from "lucide-react";
+
+// Mock data for retailer dashboard
+const recentOrders = [
+  { id: "ORD-001", date: "2024-01-15", status: "Delivered", total: 1687.50 },
+  { id: "ORD-002", date: "2024-01-20", status: "In Transit", total: 892.25 },
+  { id: "ORD-003", date: "2024-01-22", status: "Processing", total: 2340.75 }
+];
+
+const featuredProducts = [
+  { name: "Premium Coffee Beans", price: 24.99, stock: "In Stock" },
+  { name: "Organic Tea Leaves", price: 18.50, stock: "Low Stock" },
+  { name: "Artisan Chocolate", price: 32.75, stock: "In Stock" }
+];
 
 const RetailerDashboard = () => {
-  const navigate = useNavigate();
-
-  const stats = [
-    {
-      title: "Total Orders",
-      value: "24",
-      change: "+3 this month",
-      icon: ShoppingCart,
-      color: "text-blue-600",
-      bgColor: "bg-blue-50"
-    },
-    {
-      title: "Total Spent",
-      value: "₹1,25,400",
-      change: "+15% from last month",
-      icon: IndianRupee,
-      color: "text-green-600",
-      bgColor: "bg-green-50"
-    },
-    {
-      title: "Products Ordered",
-      value: "156",
-      change: "+8 new items",
-      icon: Package,
-      color: "text-purple-600",
-      bgColor: "bg-purple-50"
-    },
-    {
-      title: "Avg Order Value",
-      value: "₹5,225",
-      change: "+12% improvement",
-      icon: TrendingUp,
-      color: "text-orange-600",
-      bgColor: "bg-orange-50"
+  const getStatusColor = (status: string) => {
+    switch (status.toLowerCase()) {
+      case "delivered":
+        return "bg-green-100 text-green-800";
+      case "in transit":
+        return "bg-blue-100 text-blue-800";
+      case "processing":
+        return "bg-yellow-100 text-yellow-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
-  ];
-
-  const recentOrders = [
-    { id: "ORD-R001", date: "2024-01-15", amount: "₹8,500", status: "Delivered", items: 12 },
-    { id: "ORD-R002", date: "2024-01-18", amount: "₹5,200", status: "In Transit", items: 8 },
-    { id: "ORD-R003", date: "2024-01-20", amount: "₹12,300", status: "Processing", items: 15 },
-  ];
-
-  const featuredProducts = [
-    { id: 1, name: "Premium Rice 25kg", price: "₹1,250", category: "Grains", image: "/placeholder.svg" },
-    { id: 2, name: "Wheat Flour 10kg", price: "₹480", category: "Flour", image: "/placeholder.svg" },
-    { id: 3, name: "Basmati Rice 20kg", price: "₹2,100", category: "Rice", image: "/placeholder.svg" },
-  ];
+  };
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Retailer Dashboard</h1>
-          <p className="text-gray-600">Welcome back! Manage your wholesale orders and explore products.</p>
-        </div>
-        <Button onClick={() => navigate("/catalog")} className="bg-green-600 hover:bg-green-700">
-          <Package className="h-4 w-4 mr-2" />
-          Browse Catalog
-        </Button>
+      <div>
+        <h1 className="text-3xl font-bold">Dashboard</h1>
+        <p className="text-gray-600">Welcome back! Here's what's happening with your orders.</p>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {stats.map((stat, index) => (
-          <Card key={index}>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">
-                {stat.title}
-              </CardTitle>
-              <div className={`p-2 rounded-lg ${stat.bgColor}`}>
-                <stat.icon className={`h-4 w-4 ${stat.color}`} />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-gray-900">{stat.value}</div>
-              <p className="text-xs text-green-600 mt-1">{stat.change}</p>
-            </CardContent>
-          </Card>
-        ))}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Orders</CardTitle>
+            <ShoppingCart className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">247</div>
+            <p className="text-xs text-muted-foreground">+12% from last month</p>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Spent</CardTitle>
+            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">₹2,43,567</div>
+            <p className="text-xs text-muted-foreground">+8% from last month</p>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Pending Orders</CardTitle>
+            <Clock className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">8</div>
+            <p className="text-xs text-muted-foreground">2 processing, 6 in transit</p>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Available Products</CardTitle>
+            <Package className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">156</div>
+            <p className="text-xs text-muted-foreground">Across all categories</p>
+          </CardContent>
+        </Card>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid lg:grid-cols-2 gap-6">
         {/* Recent Orders */}
         <Card>
           <CardHeader>
             <CardTitle>Recent Orders</CardTitle>
-            <CardDescription>Your latest wholesale orders</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3">
-              {recentOrders.map((order, index) => (
-                <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
+            <div className="space-y-4">
+              {recentOrders.map((order) => (
+                <div key={order.id} className="flex items-center justify-between p-4 border rounded-lg">
                   <div>
-                    <p className="font-medium text-gray-900">{order.id}</p>
-                    <p className="text-sm text-gray-600">{order.date} • {order.items} items</p>
+                    <p className="font-medium">{order.id}</p>
+                    <p className="text-sm text-gray-600">{new Date(order.date).toLocaleDateString()}</p>
                   </div>
-                  <div className="text-right">
-                    <p className="font-medium text-gray-900">{order.amount}</p>
-                    <Badge 
-                      variant={order.status === 'Processing' ? 'secondary' : 
-                               order.status === 'In Transit' ? 'default' : 'outline'}
-                      className={order.status === 'Delivered' ? 'bg-green-100 text-green-800' : ''}
-                    >
-                      {order.status === 'Delivered' && <CheckCircle className="h-3 w-3 mr-1" />}
-                      {order.status === 'In Transit' && <Clock className="h-3 w-3 mr-1" />}
+                  <div className="flex items-center space-x-4">
+                    <Badge className={getStatusColor(order.status)}>
                       {order.status}
                     </Badge>
+                    <p className="font-semibold">₹{order.total.toFixed(2)}</p>
+                    <Button variant="ghost" size="sm">
+                      <Eye className="h-4 w-4" />
+                    </Button>
                   </div>
                 </div>
               ))}
-            </div>
-            <div className="mt-4">
-              <Button variant="outline" className="w-full" onClick={() => navigate("/order-history")}>
-                View All Orders
-              </Button>
             </div>
           </CardContent>
         </Card>
@@ -137,31 +118,25 @@ const RetailerDashboard = () => {
         <Card>
           <CardHeader>
             <CardTitle>Featured Products</CardTitle>
-            <CardDescription>Popular items in wholesale</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3">
-              {featuredProducts.map((product) => (
-                <div key={product.id} className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50 cursor-pointer"
-                     onClick={() => navigate(`/product/${product.id}`)}>
-                  <div className="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center">
-                    <Package className="h-6 w-6 text-gray-400" />
+            <div className="space-y-4">
+              {featuredProducts.map((product, index) => (
+                <div key={index} className="flex items-center justify-between p-4 border rounded-lg">
+                  <div>
+                    <p className="font-medium">{product.name}</p>
+                    <p className="text-sm text-gray-600">₹{product.price} per unit</p>
                   </div>
-                  <div className="flex-1">
-                    <p className="font-medium text-gray-900">{product.name}</p>
-                    <p className="text-sm text-gray-600">{product.category}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-medium text-gray-900">{product.price}</p>
-                    <p className="text-xs text-gray-500">per unit</p>
+                  <div className="flex items-center space-x-4">
+                    <Badge variant={product.stock === "Low Stock" ? "destructive" : "secondary"}>
+                      {product.stock}
+                    </Badge>
+                    <Button variant="outline" size="sm">
+                      View
+                    </Button>
                   </div>
                 </div>
               ))}
-            </div>
-            <div className="mt-4">
-              <Button variant="outline" className="w-full" onClick={() => navigate("/catalog")}>
-                View All Products
-              </Button>
             </div>
           </CardContent>
         </Card>

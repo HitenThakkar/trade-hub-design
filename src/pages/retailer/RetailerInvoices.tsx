@@ -98,7 +98,7 @@ const RetailerInvoices = () => {
             <CardTitle className="text-sm font-medium text-gray-600">Total Outstanding</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-red-600">${totalOutstanding.toFixed(2)}</div>
+            <div className="text-2xl font-bold text-red-600">₹{totalOutstanding.toFixed(2)}</div>
           </CardContent>
         </Card>
         
@@ -107,7 +107,7 @@ const RetailerInvoices = () => {
             <CardTitle className="text-sm font-medium text-gray-600">This Month</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">${mockInvoices.reduce((sum, inv) => sum + inv.total, 0).toFixed(2)}</div>
+            <div className="text-2xl font-bold">₹{mockInvoices.reduce((sum, inv) => sum + inv.total, 0).toFixed(2)}</div>
           </CardContent>
         </Card>
         
@@ -187,9 +187,9 @@ const RetailerInvoices = () => {
                   
                   <div className="flex flex-col sm:items-end space-y-2">
                     <div className="text-right">
-                      <p className="text-sm text-gray-600">Amount: ${invoice.amount.toFixed(2)}</p>
-                      <p className="text-sm text-gray-600">Tax: ${invoice.tax.toFixed(2)}</p>
-                      <p className="text-xl font-semibold">Total: ${invoice.total.toFixed(2)}</p>
+                      <p className="text-sm text-gray-600">Amount: ₹{invoice.amount.toFixed(2)}</p>
+                      <p className="text-sm text-gray-600">Tax: ₹{invoice.tax.toFixed(2)}</p>
+                      <p className="text-xl font-semibold">Total: ₹{invoice.total.toFixed(2)}</p>
                     </div>
                     <div className="flex space-x-2">
                       <Button variant="outline" size="sm">

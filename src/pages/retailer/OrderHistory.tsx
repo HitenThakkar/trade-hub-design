@@ -143,7 +143,7 @@ const OrderHistory = () => {
                   </div>
                   
                   <div className="flex flex-col sm:items-end space-y-2">
-                    <p className="text-xl font-semibold">${order.total.toFixed(2)}</p>
+                    <p className="text-xl font-semibold">₹{order.total.toFixed(2)}</p>
                     <div className="flex space-x-2">
                       <Button variant="outline" size="sm">
                         <Eye className="h-4 w-4 mr-2" />

@@ -173,23 +173,23 @@ const Checkout = () => {
                   <div key={index} className="flex justify-between items-center py-2 border-b">
                     <div>
                       <h4 className="font-medium">{item.name}</h4>
-                      <p className="text-sm text-gray-600">{item.quantity} {item.unit} × ${item.price}</p>
+                      <p className="text-sm text-gray-600">{item.quantity} {item.unit} × ₹{item.price}</p>
                     </div>
-                    <span className="font-medium">${(item.quantity * item.price).toFixed(2)}</span>
+                    <span className="font-medium">₹{(item.quantity * item.price).toFixed(2)}</span>
                   </div>
                 ))}
                 <div className="pt-4 space-y-2">
                   <div className="flex justify-between">
                     <span>Subtotal</span>
-                    <span>${subtotal.toFixed(2)}</span>
+                    <span>₹{subtotal.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Tax</span>
-                    <span>${tax.toFixed(2)}</span>
+                    <span>₹{tax.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between font-semibold text-lg pt-2 border-t">
                     <span>Total</span>
-                    <span>${total.toFixed(2)}</span>
+                    <span>₹{total.toFixed(2)}</span>
                   </div>
                 </div>
               </CardContent>
@@ -224,13 +224,13 @@ const Checkout = () => {
               {orderItems.map((item, index) => (
                 <div key={index} className="flex justify-between py-2">
                   <span className="text-sm">{item.name} ({item.quantity} {item.unit})</span>
-                  <span className="text-sm">${(item.quantity * item.price).toFixed(2)}</span>
+                  <span className="text-sm">₹{(item.quantity * item.price).toFixed(2)}</span>
                 </div>
               ))}
               <div className="border-t pt-4 mt-4">
                 <div className="flex justify-between font-semibold">
                   <span>Total</span>
-                  <span>${total.toFixed(2)}</span>
+                  <span>₹{total.toFixed(2)}</span>
                 </div>
               </div>
             </CardContent>
