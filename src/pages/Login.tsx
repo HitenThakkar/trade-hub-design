@@ -4,9 +4,16 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Building2, Chrome } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
-const Index = () => {
+const Login = () => {
+  const navigate = useNavigate();
+
+  const handleLogin = () => {
+    // Simulate login
+    navigate("/dashboard");
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
       <div className="w-full max-w-md">
@@ -20,15 +27,15 @@ const Index = () => {
 
         <Card>
           <CardHeader>
-            <CardTitle>Create Account</CardTitle>
+            <CardTitle>Welcome Back</CardTitle>
             <CardDescription>
-              Sign up for your wholesaler account
+              Sign in to your account
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <Button className="w-full bg-white border border-gray-300 text-gray-700 hover:bg-gray-50">
               <Chrome className="h-4 w-4 mr-2" />
-              Sign up with Google
+              Continue with Google
             </Button>
             
             <div className="relative">
@@ -41,41 +48,25 @@ const Index = () => {
             </div>
 
             <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="firstName">First Name</Label>
-                  <Input id="firstName" placeholder="John" />
-                </div>
-                <div>
-                  <Label htmlFor="lastName">Last Name</Label>
-                  <Input id="lastName" placeholder="Doe" />
-                </div>
-              </div>
-              
               <div>
                 <Label htmlFor="email">Email</Label>
-                <Input id="email" type="email" placeholder="john@company.com" />
-              </div>
-              
-              <div>
-                <Label htmlFor="company">Company Name</Label>
-                <Input id="company" placeholder="Your Company Ltd." />
+                <Input id="email" type="email" placeholder="admin@wms.com" />
               </div>
               
               <div>
                 <Label htmlFor="password">Password</Label>
-                <Input id="password" type="password" />
+                <Input id="password" type="password" placeholder="••••••••" />
               </div>
               
-              <Button className="w-full bg-blue-600 hover:bg-blue-700">
-                Create Account
+              <Button onClick={handleLogin} className="w-full bg-blue-600 hover:bg-blue-700">
+                Sign In
               </Button>
             </div>
 
             <div className="text-center text-sm">
-              <span className="text-gray-600">Already have an account? </span>
-              <Link to="/login" className="text-blue-600 hover:underline">
-                Sign in
+              <span className="text-gray-600">Don't have an account? </span>
+              <Link to="/" className="text-blue-600 hover:underline">
+                Sign up
               </Link>
             </div>
           </CardContent>
@@ -85,4 +76,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default Login;
