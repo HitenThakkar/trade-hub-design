@@ -3,15 +3,25 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Building2, Chrome } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 const Login = () => {
   const navigate = useNavigate();
+  const [role, setRole] = useState("");
 
   const handleLogin = () => {
-    // Simulate login
-    navigate("/dashboard");
+    // Simple role-based redirect with static data
+    if (role === "admin") {
+      navigate("/dashboard");
+    } else if (role === "retailer") {
+      navigate("/retailerDashboard");
+    } else {
+      // Default to retailer if no role selected
+      navigate("/retailerDashboard");
+    }
   };
 
   return (
@@ -48,6 +58,19 @@ const Login = () => {
             </div>
 
             <div className="space-y-4">
+              <div>
+                <Label htmlFor="role">Login As</Label>
+                <Select value={role} onValueChange={setRole}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select your role" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="admin">Admin</SelectItem>
+                    <SelectItem value="retailer">Retailer</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
               <div>
                 <Label htmlFor="email">Email</Label>
                 <Input id="email" type="email" placeholder="admin@wms.com" />
