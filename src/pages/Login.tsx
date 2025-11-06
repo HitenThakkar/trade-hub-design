@@ -3,24 +3,52 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Building2, Chrome } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Building2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Login = () => {
   const navigate = useNavigate();
-  const [role, setRole] = useState("");
+  const { login, isAuthenticated, user } = useAuth();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = () => {
-    // Simple role-based redirect with static data
-    if (role === "admin") {
-      navigate("/dashboard");
-    } else if (role === "retailer") {
-      navigate("/retailerDashboard");
-    } else {
-      // Default to retailer if no role selected
-      navigate("/retailerDashboard");
+  // Redirect if already authenticated
+  useState(() => {
+    if (isAuthenticated && user) {
+      if (user.role === "wholesaler") {
+        navigate("/dashboard");
+      } else {
+        navigate("/retailerDashboard");
+      }
+    }
+  });
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!email || !password) {
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      await login(email, password);
+      
+      // The AuthContext will update the user state
+      // We'll redirect based on role after login succeeds
+      const role = localStorage.getItem('user_role');
+      if (role === "wholesaler") {
+        navigate("/dashboard");
+      } else {
+        navigate("/retailerDashboard");
+      }
+    } catch (error) {
+      // Error is handled in AuthContext with toast
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -42,56 +70,40 @@ const Login = () => {
               Sign in to your account
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <Button className="w-full bg-white border border-gray-300 text-gray-700 hover:bg-gray-50">
-              <Chrome className="h-4 w-4 mr-2" />
-              Continue with Google
-            </Button>
-            
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300" />
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">Or continue with</span>
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="role">Login As</Label>
-                <Select value={role} onValueChange={setRole}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select your role" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="admin">Admin</SelectItem>
-                    <SelectItem value="retailer">Retailer</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
+          <CardContent>
+            <form onSubmit={handleLogin} className="space-y-4">
               <div>
                 <Label htmlFor="email">Email</Label>
-                <Input id="email" type="email" placeholder="admin@wms.com" />
+                <Input 
+                  id="email" 
+                  type="email" 
+                  placeholder="user@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
               </div>
               
               <div>
                 <Label htmlFor="password">Password</Label>
-                <Input id="password" type="password" placeholder="••••••••" />
+                <Input 
+                  id="password" 
+                  type="password" 
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
               </div>
               
-              <Button onClick={handleLogin} className="w-full bg-blue-600 hover:bg-blue-700">
-                Sign In
+              <Button 
+                type="submit" 
+                className="w-full bg-blue-600 hover:bg-blue-700"
+                disabled={isLoading}
+              >
+                {isLoading ? "Signing in..." : "Sign In"}
               </Button>
-            </div>
-
-            <div className="text-center text-sm">
-              <span className="text-gray-600">Don't have an account? </span>
-              <Link to="/" className="text-blue-600 hover:underline">
-                Sign up
-              </Link>
-            </div>
+            </form>
           </CardContent>
         </Card>
       </div>

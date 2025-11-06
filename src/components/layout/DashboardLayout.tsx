@@ -4,6 +4,7 @@ import { AppSidebar } from "./AppSidebar";
 import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -11,8 +12,10 @@ interface DashboardLayoutProps {
 
 export function DashboardLayout({ children }: DashboardLayoutProps) {
   const navigate = useNavigate();
+  const { logout, user } = useAuth();
 
   const handleLogout = () => {
+    logout();
     navigate("/login");
   };
 
@@ -30,11 +33,11 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
               </Button>
               <div className="flex items-center space-x-2">
                 <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
-                  <span className="text-white text-sm font-medium">A</span>
+                  <span className="text-white text-sm font-medium">{user?.name?.charAt(0) || 'A'}</span>
                 </div>
                 <div className="hidden sm:block">
-                  <p className="text-sm font-medium">Admin User</p>
-                  <p className="text-xs text-gray-500">admin@wms.com</p>
+                  <p className="text-sm font-medium">{user?.name || 'Admin User'}</p>
+                  <p className="text-xs text-gray-500">{user?.email || 'admin@wms.com'}</p>
                 </div>
               </div>
             </div>

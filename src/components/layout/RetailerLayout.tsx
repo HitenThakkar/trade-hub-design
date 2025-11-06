@@ -4,6 +4,7 @@ import { RetailerSidebar } from "./RetailerSidebar";
 import { Button } from "@/components/ui/button";
 import { LogOut, ShoppingCart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface RetailerLayoutProps {
   children: React.ReactNode;
@@ -11,8 +12,10 @@ interface RetailerLayoutProps {
 
 export function RetailerLayout({ children }: RetailerLayoutProps) {
   const navigate = useNavigate();
+  const { logout, user } = useAuth();
 
   const handleLogout = () => {
+    logout();
     navigate("/login");
   };
 
@@ -34,11 +37,11 @@ export function RetailerLayout({ children }: RetailerLayoutProps) {
               </Button>
               <div className="flex items-center space-x-2">
                 <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center">
-                  <span className="text-white text-sm font-medium">R</span>
+                  <span className="text-white text-sm font-medium">{user?.name?.charAt(0) || 'R'}</span>
                 </div>
                 <div className="hidden sm:block">
-                  <p className="text-sm font-medium">Retailer User</p>
-                  <p className="text-xs text-gray-500">retailer@company.com</p>
+                  <p className="text-sm font-medium">{user?.name || 'Retailer User'}</p>
+                  <p className="text-xs text-gray-500">{user?.email || 'retailer@company.com'}</p>
                 </div>
               </div>
             </div>
