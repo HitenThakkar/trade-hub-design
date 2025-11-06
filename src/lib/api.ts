@@ -84,7 +84,7 @@ class ApiClient {
 
   // Products
   async getProducts() {
-    return this.request<any[]>('/products', {
+    return this.request<{ count: number; products: any[] }>('/products', {
       method: 'GET',
     });
   }

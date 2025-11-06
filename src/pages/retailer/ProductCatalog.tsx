@@ -40,10 +40,12 @@ const ProductCatalog = () => {
     try {
       setIsLoading(true);
       const data = await api.getProducts();
-      setProducts(data);
+      // API returns {count, products} so extract the products array
+      const productsArray = data.products || [];
+      setProducts(productsArray);
       
       // Extract unique categories
-      const uniqueCategories = ["All", ...new Set(data.map((p: Product) => p.category))];
+      const uniqueCategories: string[] = ["All", ...new Set(productsArray.map((p: Product) => p.category))];
       setCategories(uniqueCategories);
     } catch (error) {
       toast({
