@@ -1,72 +1,64 @@
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, Filter, ShoppingCart, Grid, List } from "lucide-react";
-import { useState } from "react";
+import { Search, Filter, ShoppingCart, Grid, List, Loader2 } from "lucide-react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { api } from "@/lib/api";
+import { useToast } from "@/hooks/use-toast";
 
-// Mock product data
-const mockProducts = [
-  {
-    id: 1,
-    name: "Premium Coffee Beans",
-    category: "Beverages",
-    price: 24.99,
-    unit: "kg",
-    image: "/placeholder.svg",
-    description: "High-quality arabica coffee beans",
-    inStock: true,
-    minOrder: 10
-  },
-  {
-    id: 2,
-    name: "Organic Tea Leaves",
-    category: "Beverages", 
-    price: 18.50,
-    unit: "kg",
-    image: "/placeholder.svg",
-    description: "Premium organic tea leaves",
-    inStock: true,
-    minOrder: 5
-  },
-  {
-    id: 3,
-    name: "Artisan Chocolate",
-    category: "Confectionery",
-    price: 32.75,
-    unit: "kg",
-    image: "/placeholder.svg",
-    description: "Handcrafted premium chocolate",
-    inStock: false,
-    minOrder: 2
-  },
-  {
-    id: 4,
-    name: "Organic Honey",
-    category: "Natural Products",
-    price: 45.00,
-    unit: "kg",
-    image: "/placeholder.svg",
-    description: "Pure organic wildflower honey",
-    inStock: true,
-    minOrder: 3
-  }
-];
-
-const categories = ["All", "Beverages", "Confectionery", "Natural Products"];
+interface Product {
+  _id: string;
+  name: string;
+  category: string;
+  price: number;
+  stock: number;
+  description?: string;
+  image?: string;
+  unit?: string;
+  minOrder?: number;
+}
 
 const ProductCatalog = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [products, setProducts] = useState<Product[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [categories, setCategories] = useState<string[]>(["All"]);
 
-  const filteredProducts = mockProducts.filter(product => {
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  const fetchProducts = async () => {
+    try {
+      setIsLoading(true);
+      const data = await api.getProducts();
+      setProducts(data);
+      
+      // Extract unique categories
+      const uniqueCategories = ["All", ...new Set(data.map((p: Product) => p.category))];
+      setCategories(uniqueCategories);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to fetch products",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const filteredProducts = products.filter(product => {
     const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         product.description.toLowerCase().includes(searchTerm.toLowerCase());
+                         (product.description?.toLowerCase() || '').includes(searchTerm.toLowerCase());
     const matchesCategory = selectedCategory === "All" || product.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
@@ -128,8 +120,13 @@ const ProductCatalog = () => {
       </Card>
 
       {/* Products */}
-      <div className={viewMode === "grid" ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" : "space-y-4"}>
-        {filteredProducts.length === 0 ? (
+      {isLoading ? (
+        <div className="flex items-center justify-center py-16">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      ) : (
+        <div className={viewMode === "grid" ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" : "space-y-4"}>
+          {filteredProducts.length === 0 ? (
           <div className="col-span-full">
             <Card>
               <CardContent className="text-center py-16">
@@ -141,39 +138,40 @@ const ProductCatalog = () => {
               </CardContent>
             </Card>
           </div>
-        ) : (
-          filteredProducts.map((product) => (
-            <Card key={product.id} className={viewMode === "list" ? "w-full" : ""}>
-              <CardContent className={`p-4 ${viewMode === "list" ? "flex items-center space-x-4" : ""}`}>
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  className={viewMode === "list" ? "w-24 h-24 object-cover rounded-lg" : "w-full h-48 object-cover rounded-lg mb-4"}
-                />
-                <div className={viewMode === "list" ? "flex-1" : ""}>
-                  <h3 className="font-semibold text-lg mb-2">{product.name}</h3>
-                  <p className="text-gray-600 mb-2">{product.description}</p>
-                  <div className="flex items-center justify-between mb-3">
-                    <Badge variant={product.inStock ? "secondary" : "destructive"}>
-                      {product.inStock ? "In Stock" : "Out of Stock"}
-                    </Badge>
-                    <span className="text-sm text-gray-500">Min: {product.minOrder} {product.unit}</span>
+          ) : (
+            filteredProducts.map((product) => (
+              <Card key={product._id} className={viewMode === "list" ? "w-full" : ""}>
+                <CardContent className={`p-4 ${viewMode === "list" ? "flex items-center space-x-4" : ""}`}>
+                  <img
+                    src={product.image || "/placeholder.svg"}
+                    alt={product.name}
+                    className={viewMode === "list" ? "w-24 h-24 object-cover rounded-lg" : "w-full h-48 object-cover rounded-lg mb-4"}
+                  />
+                  <div className={viewMode === "list" ? "flex-1" : ""}>
+                    <h3 className="font-semibold text-lg mb-2">{product.name}</h3>
+                    <p className="text-gray-600 mb-2">{product.description || 'No description available'}</p>
+                    <div className="flex items-center justify-between mb-3">
+                      <Badge variant={product.stock > 0 ? "secondary" : "destructive"}>
+                        {product.stock > 0 ? `In Stock (${product.stock})` : "Out of Stock"}
+                      </Badge>
+                      <span className="text-sm text-gray-500">{product.category}</span>
+                    </div>
+                    <div className={`flex items-center justify-between ${viewMode === "list" ? "" : ""}`}>
+                      <span className="text-xl font-bold">₹{product.price.toFixed(2)}{product.unit ? `/${product.unit}` : ''}</span>
+                      <Button 
+                        onClick={() => navigate(`/product/${product._id}`)}
+                        disabled={product.stock === 0}
+                      >
+                        View Details
+                      </Button>
+                    </div>
                   </div>
-                  <div className={`flex items-center justify-between ${viewMode === "list" ? "" : ""}`}>
-                    <span className="text-xl font-bold">₹{product.price}/{product.unit}</span>
-                    <Button 
-                      onClick={() => navigate(`/product/${product.id}`)}
-                      disabled={!product.inStock}
-                    >
-                      View Details
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))
-        )}
-      </div>
+                </CardContent>
+              </Card>
+            ))
+          )}
+        </div>
+      )}
     </div>
   );
 };
